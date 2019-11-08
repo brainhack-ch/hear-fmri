@@ -2,26 +2,24 @@
 #!/usr/bin/env python
 
 # import statements
-
+import sys
 from scipy.io import loadmat
-from channel import Channel
+from channel  import Channel
+import numpy
 
 if __name__ == "__main__":
 	print("Now running!")
 
-	channels = {
-		"anxiety": Channel("Test_sounds/Anxiety.wav"),
-		"anger1": Channel("Test_sounds/Cranky Chords.wav"),
-	}
+	stepsize = 720 #ms
+
+	fmridata = loadmat('test_data/matrix_network.mat')
+	music_array = fmridata['matrix_network']
+
+	channels = []
+	for i in len(music_array):
+		thischannel = Channel("{0}".format(i))
+		thischannel.store_channels(music_array[i])
+		channels.append(thischannel)
 
 	for c in channels:
-		channels[c].startPlay()
-	for c in channels:
-		channels[c].endPlay()
-
-	fmridata = loadmat('Brainhack_Nov2019/Data/Rest/Run1/Rest1LR_Sub100307_Glasser.mat')
-	print (fmridata)
-	#lon = x['lon']
-	#lat = x['lat']
-	# one-liner to read a single variable
-	#lon = loadmat('test.mat')['lon']
+		c.output()
