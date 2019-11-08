@@ -1,16 +1,17 @@
 from mxm.midifile import MidiOutFile
-import midi
-​
+from mxm.midifile import MidiInFile, MidiToCode
 class Channel:
 	#Create file
-	def __init__(self, channel):
+	def __init__(self, channel, input_midi):
+		self.channel = channel
 		out_file = open(data_folder + str(channel)+'.mid', 'wb')
-		self.midi = MidiOutFile(out_file)
-​
-	def store_channels(channel_signal):
+		self.output_midi = MidiOutFile(out_file)
+		self.input_midi = MidiInFile(MidiToCode(), input_midi)
+
+	def store_channels(self, channel_sig):
 		self.signal = channel_signal
-​
-	def output(self):
+			
+	def process(self):
 		self.midi.header(format=0, nTracks=1, division=96)
 		self.midi.start_of_track()
 		self.midi.update_time(0)

@@ -14,9 +14,8 @@ if __name__ == "__main__":
 
 	fmridata = loadmat('test_data/matrix_network.mat')
 	music_array = fmridata['matrix_network']
-
 	channels = []
-	for i in len(music_array):
+	for i in range(len(music_array)):
 		thischannel = Channel("{0}".format(i))
 		thischannel.store_channels(music_array[i])
 		channels.append(thischannel)
