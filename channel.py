@@ -10,7 +10,7 @@ class Channel:
 
 	def store_channels(self, channel_sig):
 		self.signal = channel_signal
-			
+
 	def process(self):
 		self.midi.header(format=0, nTracks=1, division=96)
 		self.midi.start_of_track()
@@ -20,3 +20,6 @@ class Channel:
 				self.midi.note_on(idx, 0x40, 0x64)
 				self.midi.update_time(idx+50)
 				self.midi.note_off(0, 0x40, 0x40)
+
+	def play(self,idx)
+		self.signal
