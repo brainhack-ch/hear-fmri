@@ -32,6 +32,7 @@ if __name__ == "__main__":
 		notes = []
 		for c in channels:
 			notes.append(c.checkPlay(i))
+		print("{0} {1}".format(i,notes))
 		
 
 	#for c in channels:
