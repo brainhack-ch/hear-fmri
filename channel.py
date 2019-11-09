@@ -1,6 +1,4 @@
-
-import simpleaudio as sa
-
+import pygame
 '''
 class MidiChannel:
 	#Create file
@@ -30,24 +28,23 @@ class WavChannel:
 		self.name = name
 
 	def setWave(self,input_wav):
-		self.wave_obj = sa.WaveObject.from_wave_file(input_wav)
+		self.wave_obj = pygame.mixer.Sound(input_wav)
+
 
 	def store_channels(self, channel_sig):
 		self.signal = channel_sig
 
 	def startPlay(self):
-		self.play_obj = self.wave_obj.play()
+		self.wave_obj.play()
 
 	def checkPlay(self, idx):
 		if self.signal[idx] == 1:
-			self.play_obj = self.wave_obj.play()
-			#self.play_obj.wait_done()
+			self.wave_obj.play()
 			return self.name
 		else:
-			try: elf.play_obj.stop()
-			except: pass
+			self.wave_obj.stop()
 		return None
 
 
 	def endPlay(self):
-		self.play_obj.wait_done()
+		self.wave_obj.stop()
