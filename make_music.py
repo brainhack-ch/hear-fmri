@@ -8,43 +8,39 @@ from channel  import WavChannel
 import numpy as np
 import pygame
 import time
+from matplotlib.patches import Circle, Wedge, Polygon
+from matplotlib.collections import PatchCollection
+import matplotlib.pyplot as plt
+from matplotlib import animation
 
+def makeAnimation(fmridata):
+	fig = plt.figure()
+	ax = plt.axes(xlim=(-2, 2), ylim=(-2, 2))
+	plt.gca().set_aspect('equal', adjustable='box')
+	line, = ax.plot([], [], lw=2)
+	frame1 = plt.gca()
+	frame1.axes.get_xaxis().set_ticks([])
+	frame1.axes.get_yaxis().set_ticks([])
 
-def drawBrain(fmridata):
-	from bokeh.io import output_file, show
-	from bokeh.plotting import figure
-	from bokeh.transform import linear_cmap
-	from bokeh.util.hex import hexbin
+	def init():
+	    line.set_data([], [])
+	    return line,
 
-	#x = fmridata['TCS_Visual']
-	#y = fmridata['TCSnf']
+	def animate(i):
+	    #x = np.linspace(0, 2, 1000)
+	    #y = np.sin(2 * np.pi * (x - 0.01 * i))
+	    #line.set_data(x, y)
+	    #return line,
+	    circle1 = plt.Circle((0, 0), 0.2, color='r')
+	    plt.gca().add_patch(circle1)
+	    return circle1,
 
-	n = 50000
-	x = np.random.standard_normal(n)
-	y = np.random.standard_normal(n)
+	# call the animator.  blit=True means only re-draw the parts that have changed.
+	anim = animation.FuncAnimation(fig, animate, init_func=init,
+                               frames=100, interval=20, blit=True)
+	plt.show()
 
-	bins = hexbin(x, y, 0.1)
-
-	p = figure(title="Manual hex bin for 50000 points", tools="wheel_zoom,pan,reset",
-	           match_aspect=True, background_fill_color='#440154')
-	p.grid.visible = False
-
-	p.hex_tile(q="q", r="r", size=0.1, line_color=None, source=bins,
-	           fill_color=linear_cmap('counts', 'Viridis256', 0, max(bins.counts)))
-
-	output_file("hex_tile.html")
-
-	show(p)
-
-if __name__ == "__main__":
-	print("Now running!")
-	pygame.init() 
-
-	stepsize = 720 #ms
-
-	fmridata = loadmat('test_data/matrix_network.mat')
-	#drawBrain(fmridata)
-	print (fmridata)
+def playSong(fmridata, stepsize):
 	music_array = fmridata['matrix_network']
 	nsteps = len(music_array[0])
 
@@ -53,9 +49,12 @@ if __name__ == "__main__":
 	           "Test_sounds/D.wav","Test_sounds/E.wav","Test_sounds/F.wav",
 	           "Test_sounds/G.wav"]
 
+	# set the number of channels
+	pygame.mixer.set_num_channels(7)
+
 	for i in range(len(music_array)):
 		print ("Setting channel data to", music_array[i])
-		thischannel = WavChannel("{0}".format(i), sounds[i].split('/')[-1].split('.')[0] )
+		thischannel = WavChannel(i, sounds[i].split('/')[-1].split('.')[0] )
 		thischannel.store_channels(music_array[i])
 		thischannel.setWave(sounds[i])
 		channels.append(thischannel)
@@ -66,8 +65,15 @@ if __name__ == "__main__":
 			notes.append(c.checkPlay(i))
 		noteinfo = ' '.join([n if n else ' ' for n in notes])
 		print("{0} {1}".format( i, noteinfo))
-		time.sleep(.10)
-		
+		time.sleep(stepsize)
 
-	#for c in channels:
-	#	c.process()
+if __name__ == "__main__":
+	print("Now running!")
+	pygame.init() 
+
+	stepsize = .0720 # seconds
+
+	fmridata = loadmat('test_data/matrix_network.mat')
+	#makeAnimation(fmridata)
+	#print (fmridata)
+	playSong(fmridata, stepsize)

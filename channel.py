@@ -24,27 +24,39 @@ class MidiChannel:
 class WavChannel:
 	#Create file
 	def __init__(self, channel, name = ''):
+
+		# channel number
 		self.channel = channel
+
+		# channel name
 		self.name = name
 
+		# This is the sound channel
+		self.voice = pygame.mixer.Channel(channel)
+
 	def setWave(self,input_wav):
-		self.wave_obj = pygame.mixer.Sound(input_wav)
+		self.sound = pygame.mixer.Sound(input_wav)
 
 
 	def store_channels(self, channel_sig):
 		self.signal = channel_sig
 
 	def startPlay(self):
-		self.wave_obj.play()
+		self.sound.play()
+
+	def isPlaying(self):
+		return self.voice.get_busy()
 
 	def checkPlay(self, idx):
 		if self.signal[idx] == 1:
-			self.wave_obj.play()
+			if not self.isPlaying():
+				self.voice.play(self.sound)
 			return self.name
 		else:
-			self.wave_obj.stop()
+			#self.sound.stop()
+			self.sound.fadeout(500)
 		return None
 
 
 	def endPlay(self):
-		self.wave_obj.stop()
+		self.sound.stop()
